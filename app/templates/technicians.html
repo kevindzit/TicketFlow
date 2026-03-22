@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Technicians{% endblock %}
+{% block content %}
+<h1>Technicians</h1>
+
+<table class="ticket-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Skills</th>
+            <th>Active Tickets</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tech in technicians %}
+        <tr>
+            <td>{{ tech.name }}</td>
+            <td>{{ tech.email }}</td>
+            <td>{{ tech.get_skills()|join(', ') }}</td>
+            <td>{{ tech.ticket_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

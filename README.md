@@ -33,6 +33,49 @@ The system reads incoming support tickets and uses a locally hosted LLM to class
 - HTML, CSS, JavaScript
 - Git
 
+## Setup
+
+1. Clone the repo
+```
+git clone https://github.com/kevindzit/TicketFlow.git
+cd TicketFlow
+```
+
+2. Create a virtual environment
+```
+python -m venv venv
+source venv/bin/activate  # on Windows: venv\Scripts\activate
+```
+
+3. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+4. Set up MySQL database
+```
+mysql -u root -p
+CREATE DATABASE ticketflow;
+```
+
+5. Configure environment variables
+```
+cp .env.example .env
+# edit .env with your database credentials
+```
+
+6. Seed the database
+```
+python seed.py
+```
+
+7. Run the app
+```
+python run.py
+```
+
+Default login: kevin@ticketflow.com / password123
+
 ## Status
 
-Currently in the planning and design phase. Development is underway for the Spring 2026 semester.
+Development in progress for Spring 2026 semester.

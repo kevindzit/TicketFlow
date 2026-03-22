@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+{% block content %}
+<h1>Ticket #{{ ticket.id }}: {{ ticket.subject }}</h1>
+
+<div class="ticket-info">
+    <div class="info-row">
+        <strong>Client:</strong> {{ ticket.client.name if ticket.client else 'N/A' }}
+    </div>
+    <div class="info-row">
+        <strong>Status:</strong> <span class="status-badge {{ ticket.status|lower|replace(' ', '-') }}">{{ ticket.status }}</span>
+    </div>
+    <div class="info-row">
+        <strong>Priority:</strong> <span class="priority-badge {{ ticket.priority|lower }}">{{ ticket.priority }}</span>
+    </div>
+    <div class="info-row">
+        <strong>Category:</strong> {{ ticket.category or 'Unclassified' }}
+    </div>
+    <div class="info-row">
+        <strong>Assigned To:</strong> {{ ticket.assigned_tech.name if ticket.assigned_tech else 'Unassigned' }}
+    </div>
+    <div class="info-row">
+        <strong>Created:</strong> {{ ticket.created_at.strftime('%m/%d/%Y %I:%M %p') }}
+    </div>
+</div>
+
+<div class="ticket-description">
+    <h3>Description</h3>
+    <p>{{ ticket.description }}</p>
+</div>
+
+{% if ticket.ai_summary %}
+<div class="ai-summary">
+    <h3>AI Summary</h3>
+    <p>{{ ticket.ai_summary }}</p>
+</div>
+{% endif %}
+
+{% if current_user.role == 'admin' %}
+<div class="admin-actions">
+    <h3>Reassign Ticket</h3>
+    <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}">
+        <select name="technician_id">
+            {% for tech in technicians %}
+            <option value="{{ tech.id }}">{{ tech.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn">Reassign</button>
+    </form>
+</div>
+{% endif %}
+
+<div class="ticket-notes">
+    <h3>Notes</h3>
+    {% for note in ticket.notes %}
+    <div class="note">
+        <strong>{{ note.author.name }}</strong> - {{ note.created_at.strftime('%m/%d/%Y %I:%M %p') }}
+        <p>{{ note.content }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
