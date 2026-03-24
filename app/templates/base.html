@@ -17,6 +17,7 @@
             {% if current_user.role == 'admin' %}
             <a href="{{ url_for('admin.technicians') }}">Technicians</a>
             {% endif %}
+            <a href="{{ url_for('auth.profile') }}">{{ current_user.name }}</a>
             <a href="{{ url_for('auth.logout') }}">Logout</a>
         </div>
     </nav>

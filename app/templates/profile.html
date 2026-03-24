@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1>My Profile</h1>
+
+<div class="ticket-info">
+    <div class="info-row">
+        <strong>Name:</strong> {{ current_user.name }}
+    </div>
+    <div class="info-row">
+        <strong>Email:</strong> {{ current_user.email }}
+    </div>
+    <div class="info-row">
+        <strong>Role:</strong> {{ current_user.role }}
+    </div>
+    <div class="info-row">
+        <strong>Member Since:</strong> {{ current_user.created_at.strftime('%m/%d/%Y') }}
+    </div>
+</div>
+
+<div class="ticket-form" style="margin-top: 20px;">
+    <h3>Change Password</h3>
+    <form method="POST" action="{{ url_for('auth.change_password') }}">
+        <div class="form-group">
+            <label for="current_password">Current Password</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+        <div class="form-group">
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Confirm New Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </div>
+        <button type="submit" class="btn">Update Password</button>
+    </form>
+</div>
+{% endblock %}
