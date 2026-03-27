@@ -17,6 +17,9 @@
         <strong>Category:</strong> {{ ticket.category or 'Unclassified' }}
     </div>
     <div class="info-row">
+        <strong>Urgency:</strong> {{ ticket.urgency or 'N/A' }}
+    </div>
+    <div class="info-row">
         <strong>Assigned To:</strong> {{ ticket.assigned_tech.name if ticket.assigned_tech else 'Unassigned' }}
     </div>
     <div class="info-row">
@@ -36,13 +39,29 @@
 </div>
 {% endif %}
 
+<!-- status update -->
+<div class="admin-actions">
+    <h3>Update Status</h3>
+    <form method="POST" action="{{ url_for('tickets.update_status', ticket_id=ticket.id) }}" style="display: flex; gap: 10px;">
+        <select name="status">
+            <option value="New" {% if ticket.status == 'New' %}selected{% endif %}>New</option>
+            <option value="Assigned" {% if ticket.status == 'Assigned' %}selected{% endif %}>Assigned</option>
+            <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Waiting on Client" {% if ticket.status == 'Waiting on Client' %}selected{% endif %}>Waiting on Client</option>
+            <option value="Escalated" {% if ticket.status == 'Escalated' %}selected{% endif %}>Escalated</option>
+            <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+        <button type="submit" class="btn">Update</button>
+    </form>
+</div>
+
 {% if current_user.role == 'admin' %}
 <div class="admin-actions">
     <h3>Reassign Ticket</h3>
-    <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}">
+    <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}" style="display: flex; gap: 10px;">
         <select name="technician_id">
             {% for tech in technicians %}
-            <option value="{{ tech.id }}">{{ tech.name }}</option>
+            <option value="{{ tech.id }}" {% if ticket.assigned_tech_id == tech.id %}selected{% endif %}>{{ tech.name }}</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn">Reassign</button>
@@ -50,6 +69,7 @@
 </div>
 {% endif %}
 
+<!-- notes section -->
 <div class="ticket-notes">
     <h3>Notes</h3>
     {% for note in ticket.notes %}
@@ -58,5 +78,13 @@
         <p>{{ note.content }}</p>
     </div>
     {% endfor %}
+
+    <form method="POST" action="{{ url_for('tickets.add_note', ticket_id=ticket.id) }}" style="margin-top: 15px;">
+        <div class="form-group">
+            <label for="content">Add a Note</label>
+            <textarea id="content" name="content" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn">Add Note</button>
+    </form>
 </div>
 {% endblock %}
