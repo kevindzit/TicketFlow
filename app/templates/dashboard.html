@@ -1,29 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>Dashboard</h1>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <h3>Total Tickets</h3>
-        <p class="stat-number">{{ total }}</p>
-    </div>
-    <div class="stat-card new">
-        <h3>New</h3>
-        <p class="stat-number">{{ new_count }}</p>
-    </div>
-    <div class="stat-card assigned">
-        <h3>Assigned</h3>
-        <p class="stat-number">{{ assigned }}</p>
-    </div>
-    <div class="stat-card resolved">
-        <h3>Resolved</h3>
-        <p class="stat-number">{{ resolved }}</p>
-    </div>
-</div>
+<h1>My Tickets</h1>
 
 {% if notifications %}
-<h2>Notifications</h2>
 <div class="notifications">
     {% for notif in notifications %}
     <div class="notif-item">{{ notif.message }}</div>
@@ -31,27 +11,36 @@
 </div>
 {% endif %}
 
-<h2>Recent Tickets</h2>
+{% if tickets %}
 <table class="ticket-table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Subject</th>
-            <th>Priority</th>
+            <th>Client</th>
+            <th>Category</th>
+            <th>Urgency</th>
             <th>Status</th>
             <th>Created</th>
         </tr>
     </thead>
     <tbody>
-        {% for ticket in recent_tickets %}
-        <tr class="priority-{{ ticket.priority|lower }}">
+        {% for ticket in tickets %}
+        <tr class="urgency-{{ ticket.urgency|lower }}" onclick="window.location='{{ url_for('tickets.view_ticket', ticket_id=ticket.id) }}'">
             <td>{{ ticket.id }}</td>
-            <td><a href="{{ url_for('tickets.view_ticket', ticket_id=ticket.id) }}">{{ ticket.subject }}</a></td>
-            <td>{{ ticket.priority }}</td>
+            <td>{{ ticket.subject }}</td>
+            <td>{{ ticket.client.name if ticket.client else 'N/A' }}</td>
+            <td>{{ ticket.category or 'Unclassified' }}</td>
+            <td>{{ ticket.urgency or 'N/A' }}</td>
             <td>{{ ticket.status }}</td>
             <td>{{ ticket.created_at.strftime('%m/%d/%Y') }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <p>No tickets assigned</p>
+</div>
+{% endif %}
 {% endblock %}

@@ -201,3 +201,64 @@ body {
     border-radius: 8px;
     max-width: 600px;
 }
+
+/* urgency colors */
+.urgency-critical { border-left: 4px solid #e74c3c; }
+.urgency-high { border-left: 4px solid #e67e22; }
+.urgency-medium { border-left: 4px solid #f1c40f; }
+.urgency-low { border-left: 4px solid #27ae60; }
+
+/* clickable rows */
+.ticket-table tbody tr[onclick] {
+    cursor: pointer;
+}
+
+.ticket-table tbody tr[onclick]:hover {
+    background: #f0f0f0;
+}
+
+/* empty state */
+.empty-state {
+    background: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 20px;
+    color: #888;
+}
+
+/* filter bar */
+.filter-bar {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.filter-bar form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-bar select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* known issue */
+.known-issue {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #f39c12;
+}
+
+.fix-suggestion {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e0d5b7;
+}

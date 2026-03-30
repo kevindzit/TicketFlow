@@ -39,6 +39,20 @@
 </div>
 {% endif %}
 
+{% if known_issue %}
+<div class="known-issue">
+    <h3>Known Issue Match</h3>
+    <p><strong>{{ known_issue.title }}</strong></p>
+    <p>{{ known_issue.description }}</p>
+    {% if known_issue.suggested_fix %}
+    <div class="fix-suggestion">
+        <h4>Suggested Fix</h4>
+        <p>{{ known_issue.suggested_fix }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
 <!-- status update -->
 <div class="admin-actions">
     <h3>Update Status</h3>

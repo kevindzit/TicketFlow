@@ -62,8 +62,12 @@ def new_ticket():
 def view_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     from app.models.technician import Technician
+    from app.models.known_issue import KnownIssue
     technicians = Technician.query.all()
-    return render_template('ticket_detail.html', ticket=ticket, technicians=technicians)
+    known_issue = None
+    if ticket.category:
+        known_issue = KnownIssue.query.filter_by(category=ticket.category, status='active').first()
+    return render_template('ticket_detail.html', ticket=ticket, technicians=technicians, known_issue=known_issue)
 
 @tickets_bp.route('/tickets/<int:ticket_id>/note', methods=['POST'])
 @login_required
