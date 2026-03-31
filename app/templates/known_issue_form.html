@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if issue else 'Add' }} Known Issue{% endblock %}
+{% block content %}
+<h1>{{ 'Edit' if issue else 'Add' }} Known Issue</h1>
+
+<div class="ticket-form">
+    <form method="POST">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="{{ issue.title if issue else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required>{{ issue.description if issue else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                {% for cat in ['Network', 'Hardware', 'Software', 'Email', 'Security', 'Other'] %}
+                <option value="{{ cat }}" {% if issue and issue.category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="active" {% if issue and issue.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="resolved" {% if issue and issue.status == 'resolved' %}selected{% endif %}>Resolved</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="suggested_fix">Suggested Fix</label>
+            <textarea id="suggested_fix" name="suggested_fix" rows="3">{{ issue.suggested_fix if issue else '' }}</textarea>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn">Save</button>
+            <a href="{{ url_for('known_issues.list_known_issues') }}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -15,7 +15,8 @@
             <a href="{{ url_for('tickets.list_tickets') }}">Tickets</a>
             <a href="{{ url_for('tickets.new_ticket') }}">New Ticket</a>
             {% if current_user.role == 'admin' %}
-            <a href="{{ url_for('admin.technicians') }}">Technicians</a>
+            <a href="{{ url_for('technicians.list_technicians') }}">Technicians</a>
+            <a href="{{ url_for('known_issues.list_known_issues') }}">Known Issues</a>
             {% endif %}
             <a href="{{ url_for('auth.profile') }}">{{ current_user.name }}</a>
             <a href="{{ url_for('auth.logout') }}">Logout</a>

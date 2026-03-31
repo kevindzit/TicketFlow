@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Known Issues{% endblock %}
+{% block content %}
+<h1>Known Issues</h1>
+
+<a href="{{ url_for('known_issues.add_known_issue') }}" class="btn" style="margin-bottom: 15px;">Add Known Issue</a>
+
+<table class="ticket-table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for issue in issues %}
+        <tr>
+            <td>{{ issue.title }}</td>
+            <td>{{ issue.category }}</td>
+            <td><span class="status-badge {{ issue.status }}">{{ issue.status }}</span></td>
+            <td>{{ issue.created_at.strftime('%m/%d/%Y') }}</td>
+            <td>
+                <a href="{{ url_for('known_issues.edit_known_issue', issue_id=issue.id) }}" class="btn btn-small">Edit</a>
+                <form method="POST" action="{{ url_for('known_issues.delete_known_issue', issue_id=issue.id) }}" style="display: inline;" onsubmit="return confirm('Delete this known issue?')">
+                    <button type="submit" class="btn btn-small btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

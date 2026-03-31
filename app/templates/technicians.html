@@ -3,13 +3,16 @@
 {% block content %}
 <h1>Technicians</h1>
 
+<a href="{{ url_for('technicians.add_technician') }}" class="btn" style="margin-bottom: 15px;">Add Technician</a>
+
 <table class="ticket-table">
     <thead>
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Skills</th>
-            <th>Active Tickets</th>
+            <th>Open Tickets</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -18,7 +21,13 @@
             <td>{{ tech.name }}</td>
             <td>{{ tech.email }}</td>
             <td>{{ tech.get_skills()|join(', ') }}</td>
-            <td>{{ tech.ticket_count }}</td>
+            <td>{{ tech.tickets|selectattr('status', 'ne', 'Resolved')|list|length }}</td>
+            <td>
+                <a href="{{ url_for('technicians.edit_technician', tech_id=tech.id) }}" class="btn btn-small">Edit</a>
+                <form method="POST" action="{{ url_for('technicians.delete_technician', tech_id=tech.id) }}" style="display: inline;" onsubmit="return confirm('Delete this technician? Their tickets will be unassigned.')">
+                    <button type="submit" class="btn btn-small btn-danger">Delete</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

@@ -19,11 +19,15 @@ def create_app():
     from app.routes.tickets import tickets_bp
     from app.routes.dashboard import dashboard_bp
     from app.routes.admin import admin_bp
+    from app.routes.technicians import technicians_bp
+    from app.routes.known_issues import known_issues_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(tickets_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(technicians_bp)
+    app.register_blueprint(known_issues_bp)
 
     # create tables if they dont exist
     with app.app_context():

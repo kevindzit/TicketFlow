@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if tech else 'Add' }} Technician{% endblock %}
+{% block content %}
+<h1>{{ 'Edit' if tech else 'Add' }} Technician</h1>
+
+<div class="ticket-form">
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" value="{{ tech.name if tech else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ tech.email if tech else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Skills</label>
+            <div class="checkbox-group">
+                {% for skill in ['Network', 'Hardware', 'Software', 'Email', 'Security', 'Other'] %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="skills" value="{{ skill }}"
+                        {% if tech and skill in tech.get_skills() %}checked{% endif %}>
+                    {{ skill }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn">Save</button>
+            <a href="{{ url_for('technicians.list_technicians') }}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

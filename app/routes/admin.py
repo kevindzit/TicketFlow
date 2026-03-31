@@ -7,16 +7,6 @@ from app.models.assignment_log import AssignmentLog
 
 admin_bp = Blueprint('admin', __name__)
 
-@admin_bp.route('/admin/technicians')
-@login_required
-def technicians():
-    if current_user.role != 'admin':
-        flash('Access denied', 'error')
-        return redirect(url_for('dashboard.index'))
-
-    techs = Technician.query.all()
-    return render_template('technicians.html', technicians=techs)
-
 @admin_bp.route('/admin/assign/<int:ticket_id>', methods=['POST'])
 @login_required
 def assign_ticket(ticket_id):
