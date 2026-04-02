@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 import ollama
 from flask import current_app
 
@@ -47,14 +48,23 @@ JSON Response:"""
 
         return result
 
-    except Exception as e:
-        print(f'AI classification error: {e}')
-        # return defaults if AI fails
+    except ConnectionError as e:
+        print(f'[{datetime.utcnow()}] AI classification connection error: {e}')
         return {
             'category': 'Other',
             'priority': 'Medium',
             'urgency': 'Medium',
-            'summary': f'{subject} - needs manual review'
+            'summary': f'{subject} - needs manual review',
+            'ai_classified': False
+        }
+    except Exception as e:
+        print(f'[{datetime.utcnow()}] AI classification error: {e}')
+        return {
+            'category': 'Other',
+            'priority': 'Medium',
+            'urgency': 'Medium',
+            'summary': f'{subject} - needs manual review',
+            'ai_classified': False
         }
 
 

@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.ticket import Ticket, Client, TicketNote
 from app.services.ai_classifier import classify_ticket, check_known_issues
+from app.services.assignment_engine import assign_ticket
 
 tickets_bp = Blueprint('tickets', __name__)
 
@@ -41,7 +42,8 @@ def new_ticket():
             priority=ai_result.get('priority', priority),
             category=ai_result.get('category', 'Other'),
             urgency=ai_result.get('urgency', 'Medium'),
-            ai_summary=ai_result.get('summary', '')
+            ai_summary=ai_result.get('summary', ''),
+            ai_classified=ai_result.get('ai_classified', True)
         )
         db.session.add(ticket)
         db.session.commit()
@@ -51,7 +53,13 @@ def new_ticket():
         if matched_issue:
             flash(f'Known issue detected: {matched_issue.title}. Suggested fix: {matched_issue.suggested_fix}', 'success')
 
-        flash(f'Ticket #{ticket.id} created. AI classified as {ticket.category} / {ticket.priority}', 'success')
+        # auto assign to best available technician
+        assigned_tech = assign_ticket(ticket)
+        if assigned_tech:
+            flash(f'Ticket #{ticket.id} created and assigned to {assigned_tech.name}', 'success')
+        else:
+            flash(f'Ticket #{ticket.id} created. No matching technician available, status set to Pending', 'success')
+
         return redirect(url_for('tickets.view_ticket', ticket_id=ticket.id))
 
     clients = Client.query.all()
@@ -116,14 +124,18 @@ def api_create_ticket():
         priority=ai_result.get('priority', 'Medium'),
         category=ai_result.get('category', 'Other'),
         urgency=ai_result.get('urgency', 'Medium'),
-        ai_summary=ai_result.get('summary', '')
+        ai_summary=ai_result.get('summary', ''),
+        ai_classified=ai_result.get('ai_classified', True)
     )
     db.session.add(ticket)
     db.session.commit()
 
+    assigned_tech = assign_ticket(ticket)
+
     return jsonify({
         'message': 'Ticket created',
         'ticket_id': ticket.id,
+        'assigned_to': assigned_tech.name if assigned_tech else None,
         'ai_classification': {
             'category': ticket.category,
             'priority': ticket.priority,

@@ -28,7 +28,7 @@
         {% for ticket in tickets %}
         <tr class="urgency-{{ ticket.urgency|lower }}" onclick="window.location='{{ url_for('tickets.view_ticket', ticket_id=ticket.id) }}'">
             <td>{{ ticket.id }}</td>
-            <td>{{ ticket.subject }}</td>
+            <td>{{ ticket.subject }}{% if not ticket.ai_classified %} <span class="badge-review">Manual Review</span>{% endif %}</td>
             <td>{{ ticket.client.name if ticket.client else 'N/A' }}</td>
             <td>{{ ticket.category or 'Unclassified' }}</td>
             <td>{{ ticket.urgency or 'N/A' }}</td>

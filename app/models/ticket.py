@@ -23,6 +23,7 @@ class Ticket(db.Model):
     category = db.Column(db.String(50))  # Network, Hardware, Software, Security, Email, Other
     urgency = db.Column(db.String(20), default='Medium')
     ai_summary = db.Column(db.Text)
+    ai_classified = db.Column(db.Boolean, default=True)
     status = db.Column(db.String(30), default='New')  # New, Assigned, In Progress, Waiting on Client, Escalated, Resolved
     assigned_tech_id = db.Column(db.Integer, db.ForeignKey('technicians.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
