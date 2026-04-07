@@ -21,6 +21,7 @@ def create_app():
     from app.routes.admin import admin_bp
     from app.routes.technicians import technicians_bp
     from app.routes.known_issues import known_issues_bp
+    from app.routes.notifications import notifications_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(tickets_bp)
@@ -28,6 +29,27 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(technicians_bp)
     app.register_blueprint(known_issues_bp)
+    app.register_blueprint(notifications_bp)
+
+    # inject unread notifications into all templates
+    @app.context_processor
+    def inject_notifications():
+        from flask_login import current_user
+        from app.models.notification import Notification
+        from app.models.technician import Technician
+
+        if not current_user.is_authenticated:
+            return {'unread_count': 0, 'recent_notifications': []}
+
+        tech = Technician.query.filter_by(user_id=current_user.id).first()
+        if not tech:
+            return {'unread_count': 0, 'recent_notifications': []}
+
+        notifs = Notification.query.filter_by(
+            technician_id=tech.id, read=False
+        ).order_by(Notification.created_at.desc()).limit(10).all()
+
+        return {'unread_count': len(notifs), 'recent_notifications': notifs}
 
     # create tables if they dont exist
     with app.app_context():

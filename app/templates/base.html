@@ -18,10 +18,49 @@
             <a href="{{ url_for('technicians.list_technicians') }}">Technicians</a>
             <a href="{{ url_for('known_issues.list_known_issues') }}">Known Issues</a>
             {% endif %}
+            <div class="notif-bell">
+                <a href="#" onclick="toggleNotifDropdown(event)" class="bell-link">
+                    &#128276;
+                    {% if unread_count > 0 %}
+                    <span class="notif-badge">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+                <div id="notif-dropdown" class="notif-dropdown">
+                    <div class="notif-dropdown-header">Notifications</div>
+                    {% if recent_notifications %}
+                    {% for notif in recent_notifications %}
+                    <form method="POST" action="{{ url_for('notifications.mark_read', notif_id=notif.id) }}">
+                        <button type="submit" class="notif-dropdown-item">
+                            <div class="notif-message">{{ notif.message }}</div>
+                            <div class="notif-time">{{ notif.created_at.strftime('%m/%d/%Y %I:%M %p') }}</div>
+                        </button>
+                    </form>
+                    {% endfor %}
+                    <form method="POST" action="{{ url_for('notifications.mark_all_read') }}">
+                        <button type="submit" class="notif-mark-all">Mark all as read</button>
+                    </form>
+                    {% else %}
+                    <div class="notif-empty">No new notifications</div>
+                    {% endif %}
+                </div>
+            </div>
             <a href="{{ url_for('auth.profile') }}">{{ current_user.name }}</a>
             <a href="{{ url_for('auth.logout') }}">Logout</a>
         </div>
     </nav>
+    <script>
+        function toggleNotifDropdown(e) {
+            e.preventDefault();
+            var dd = document.getElementById('notif-dropdown');
+            dd.classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            var bell = document.querySelector('.notif-bell');
+            if (bell && !bell.contains(e.target)) {
+                document.getElementById('notif-dropdown').classList.remove('open');
+            }
+        });
+    </script>
     {% endif %}
 
     <div class="container">
