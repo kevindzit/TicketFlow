@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+
+<div class="stats-grid">
+    <div class="stat-card new">
+        <h3>Open Tickets</h3>
+        <p class="stat-number">{{ open_tickets }}</p>
+    </div>
+    <div class="stat-card resolved">
+        <h3>Resolved Today</h3>
+        <p class="stat-number">{{ resolved_today }}</p>
+    </div>
+    <div class="stat-card assigned">
+        <h3>Avg Time to Assign</h3>
+        <p class="stat-number">{{ avg_time_to_assign }}h</p>
+    </div>
+    <div class="stat-card">
+        <h3>Unassigned</h3>
+        <p class="stat-number">{{ unassigned }}</p>
+    </div>
+</div>
+
+<h2>Category Breakdown</h2>
+<table class="ticket-table">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Open Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat in category_stats %}
+        <tr>
+            <td>{{ cat.name }}</td>
+            <td>{{ cat.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 style="margin-top: 30px;">Technician Breakdown</h2>
+<table class="ticket-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Assigned Tickets</th>
+            <th>Resolved (7 days)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tech in tech_stats %}
+        <tr>
+            <td>{{ tech.name }}</td>
+            <td>{{ tech.assigned }}</td>
+            <td>{{ tech.resolved }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

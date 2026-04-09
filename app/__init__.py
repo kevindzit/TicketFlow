@@ -22,6 +22,7 @@ def create_app():
     from app.routes.technicians import technicians_bp
     from app.routes.known_issues import known_issues_bp
     from app.routes.notifications import notifications_bp
+    from app.routes.reports import reports_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(tickets_bp)
@@ -30,6 +31,7 @@ def create_app():
     app.register_blueprint(technicians_bp)
     app.register_blueprint(known_issues_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(reports_bp)
 
     # inject unread notifications into all templates
     @app.context_processor

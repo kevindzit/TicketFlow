@@ -17,6 +17,7 @@
             {% if current_user.role == 'admin' %}
             <a href="{{ url_for('technicians.list_technicians') }}">Technicians</a>
             <a href="{{ url_for('known_issues.list_known_issues') }}">Known Issues</a>
+            <a href="{{ url_for('reports.index') }}">Reports</a>
             {% endif %}
             <div class="notif-bell">
                 <a href="#" onclick="toggleNotifDropdown(event)" class="bell-link">
