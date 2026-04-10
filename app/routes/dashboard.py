@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
+from datetime import datetime
 from app.models.ticket import Ticket, Client
 from app.models.technician import Technician
 from app.models.notification import Notification
+from app.models.calendar_entry import CalendarEntry
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -56,6 +58,18 @@ def admin_dashboard():
     technicians = Technician.query.all()
     clients = Client.query.all()
 
+    # build availability map for each tech
+    now = datetime.utcnow()
+    tech_availability = {}
+    for tech in technicians:
+        busy = CalendarEntry.query.filter(
+            CalendarEntry.technician_id == tech.id,
+            CalendarEntry.start_time <= now,
+            CalendarEntry.end_time >= now,
+            CalendarEntry.status.in_(['busy', 'out_of_office'])
+        ).first()
+        tech_availability[tech.id] = 'busy' if busy else 'available'
+
     return render_template('admin_dashboard.html',
         tickets=tickets,
         total=total,
@@ -63,6 +77,7 @@ def admin_dashboard():
         resolved=resolved,
         technicians=technicians,
         clients=clients,
+        tech_availability=tech_availability,
         filters={
             'status': status_filter,
             'category': category_filter,

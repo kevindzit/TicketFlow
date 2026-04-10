@@ -71,12 +71,19 @@
         {% for ticket in tickets %}
         <tr class="urgency-{{ ticket.urgency|lower }}" onclick="window.location='{{ url_for('tickets.view_ticket', ticket_id=ticket.id) }}'">
             <td>{{ ticket.id }}</td>
-            <td>{{ ticket.subject }}{% if not ticket.ai_classified %} <span class="badge-review">Manual Review</span>{% endif %}</td>
+            <td>{{ ticket.subject }}{% if not ticket.ai_classified %} <span class="badge-review">Manual Review</span>{% endif %}{% if ticket.status == 'Pending' %} <span class="badge-pending">Pending</span>{% endif %}</td>
             <td>{{ ticket.client.name if ticket.client else 'N/A' }}</td>
             <td>{{ ticket.category or 'Unclassified' }}</td>
             <td>{{ ticket.urgency or 'N/A' }}</td>
             <td>{{ ticket.status }}</td>
-            <td>{{ ticket.assigned_tech.name if ticket.assigned_tech else 'Unassigned' }}</td>
+            <td>
+                {% if ticket.assigned_tech %}
+                <span class="avail-dot {{ tech_availability.get(ticket.assigned_tech.id, 'available') }}"></span>
+                {{ ticket.assigned_tech.name }}
+                {% else %}
+                Unassigned
+                {% endif %}
+            </td>
             <td>{{ ticket.created_at.strftime('%m/%d/%Y') }}</td>
         </tr>
         {% endfor %}
