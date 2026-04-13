@@ -72,10 +72,21 @@ def view_ticket(ticket_id):
     from app.models.technician import Technician
     from app.models.known_issue import KnownIssue
     technicians = Technician.query.all()
+
+    # build open ticket counts and sort by least loaded first
+    tech_open_counts = {}
+    for tech in technicians:
+        tech_open_counts[tech.id] = Ticket.query.filter(
+            Ticket.assigned_tech_id == tech.id,
+            Ticket.status != 'Resolved'
+        ).count()
+    technicians = sorted(technicians, key=lambda t: tech_open_counts[t.id])
+
     known_issue = None
     if ticket.category:
         known_issue = KnownIssue.query.filter_by(category=ticket.category, status='active').first()
-    return render_template('ticket_detail.html', ticket=ticket, technicians=technicians, known_issue=known_issue)
+    return render_template('ticket_detail.html', ticket=ticket, technicians=technicians,
+                           tech_open_counts=tech_open_counts, known_issue=known_issue)
 
 @tickets_bp.route('/tickets/<int:ticket_id>/note', methods=['POST'])
 @login_required
@@ -111,14 +122,26 @@ def update_status(ticket_id):
 def api_create_ticket():
     data = request.get_json()
 
-    if not data or not data.get('subject') or not data.get('description'):
+    if not data:
+        return jsonify({'error': 'Request body is required'}), 400
+
+    if not data.get('subject') or not data.get('description'):
         return jsonify({'error': 'Subject and description are required'}), 400
+
+    # validate client exists
+    client_id = data.get('client_id')
+    if client_id:
+        client = Client.query.get(client_id)
+        if not client:
+            return jsonify({'error': f'Client with id {client_id} not found'}), 400
+    else:
+        return jsonify({'error': 'client_id is required'}), 400
 
     # run AI classification on api tickets too
     ai_result = classify_ticket(data['subject'], data['description'])
 
     ticket = Ticket(
-        client_id=data.get('client_id', 1),
+        client_id=client_id,
         subject=data['subject'],
         description=data['description'],
         priority=ai_result.get('priority', 'Medium'),
@@ -133,12 +156,15 @@ def api_create_ticket():
     assigned_tech = assign_ticket(ticket)
 
     return jsonify({
-        'message': 'Ticket created',
+        'success': True,
+        'message': f'Ticket #{ticket.id} created successfully',
         'ticket_id': ticket.id,
         'assigned_to': assigned_tech.name if assigned_tech else None,
+        'status': ticket.status,
         'ai_classification': {
             'category': ticket.category,
             'priority': ticket.priority,
+            'urgency': ticket.urgency,
             'summary': ticket.ai_summary
         }
     }), 201

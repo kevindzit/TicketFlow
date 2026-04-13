@@ -75,7 +75,7 @@
     <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}" style="display: flex; gap: 10px;">
         <select name="technician_id">
             {% for tech in technicians %}
-            <option value="{{ tech.id }}" {% if ticket.assigned_tech_id == tech.id %}selected{% endif %}>{{ tech.name }}</option>
+            <option value="{{ tech.id }}" {% if ticket.assigned_tech_id == tech.id %}selected{% endif %}>{{ tech.name }} ({{ tech_open_counts[tech.id] }} open)</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn">Reassign</button>
