@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.ticket import Ticket, Client, TicketNote
 from app.services.ai_classifier import classify_ticket, check_known_issues
-from app.services.assignment_engine import assign_ticket
+from app.services.assignment_engine import assign_ticket, get_tech_availability
 
 tickets_bp = Blueprint('tickets', __name__)
 
@@ -73,20 +73,23 @@ def view_ticket(ticket_id):
     from app.models.known_issue import KnownIssue
     technicians = Technician.query.all()
 
-    # build open ticket counts and sort by least loaded first
+    # build open ticket counts and availability, sort by least loaded first
     tech_open_counts = {}
+    tech_availability = {}
     for tech in technicians:
         tech_open_counts[tech.id] = Ticket.query.filter(
             Ticket.assigned_tech_id == tech.id,
             Ticket.status != 'Resolved'
         ).count()
+        tech_availability[tech.id] = get_tech_availability(tech.id)
     technicians = sorted(technicians, key=lambda t: tech_open_counts[t.id])
 
     known_issue = None
     if ticket.category:
         known_issue = KnownIssue.query.filter_by(category=ticket.category, status='active').first()
     return render_template('ticket_detail.html', ticket=ticket, technicians=technicians,
-                           tech_open_counts=tech_open_counts, known_issue=known_issue)
+                           tech_open_counts=tech_open_counts, tech_availability=tech_availability,
+                           known_issue=known_issue)
 
 @tickets_bp.route('/tickets/<int:ticket_id>/note', methods=['POST'])
 @login_required

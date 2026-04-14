@@ -107,20 +107,42 @@ def seed():
         db.session.add_all(issues)
         db.session.commit()
 
-        # calendar entries for technicians
-        tomorrow = now + timedelta(days=1)
+        # calendar entries for technicians across the next 7 days
+        pto_days = [3, 5, 2, 6, 4]  # different PTO day offset for each tech
+
         for i, tech in enumerate(techs):
-            entries = [
-                CalendarEntry(technician_id=tech.id, title='Morning standup',
-                             start_time=now.replace(hour=9, minute=0), end_time=now.replace(hour=9, minute=30), status='busy'),
-                CalendarEntry(technician_id=tech.id, title='Available',
-                             start_time=now.replace(hour=10, minute=0), end_time=now.replace(hour=12, minute=0), status='free'),
-                CalendarEntry(technician_id=tech.id, title='Lunch',
-                             start_time=now.replace(hour=12, minute=0), end_time=now.replace(hour=13, minute=0), status='busy'),
-            ]
-            if i == 2:  # james is out tomorrow
-                entries.append(CalendarEntry(technician_id=tech.id, title='PTO',
-                              start_time=tomorrow.replace(hour=8, minute=0), end_time=tomorrow.replace(hour=17, minute=0), status='out_of_office'))
+            entries = []
+            for day_offset in range(7):
+                day = now + timedelta(days=day_offset)
+                base = day.replace(hour=0, minute=0, second=0, microsecond=0)
+
+                # morning standup every day
+                entries.append(CalendarEntry(technician_id=tech.id, title='Morning standup',
+                    start_time=base.replace(hour=9, minute=0), end_time=base.replace(hour=9, minute=30), status='busy'))
+
+                # lunch every day
+                entries.append(CalendarEntry(technician_id=tech.id, title='Lunch',
+                    start_time=base.replace(hour=12, minute=0), end_time=base.replace(hour=13, minute=0), status='busy'))
+
+                # PTO day for this tech
+                if day_offset == pto_days[i]:
+                    entries.append(CalendarEntry(technician_id=tech.id, title='Out of office',
+                        start_time=base.replace(hour=8, minute=0), end_time=base.replace(hour=17, minute=0), status='out_of_office'))
+                    continue
+
+                # afternoon meetings on certain days
+                if day_offset % 2 == 0:
+                    entries.append(CalendarEntry(technician_id=tech.id, title='Client meeting',
+                        start_time=base.replace(hour=14, minute=0), end_time=base.replace(hour=15, minute=0), status='busy'))
+
+                if day_offset % 3 == 0:
+                    entries.append(CalendarEntry(technician_id=tech.id, title='Training session',
+                        start_time=base.replace(hour=15, minute=30), end_time=base.replace(hour=16, minute=30), status='busy'))
+
+                if day_offset == 1:
+                    entries.append(CalendarEntry(technician_id=tech.id, title='Project review',
+                        start_time=base.replace(hour=10, minute=0), end_time=base.replace(hour=11, minute=0), status='busy'))
+
             db.session.add_all(entries)
 
         db.session.commit()

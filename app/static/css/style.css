@@ -336,6 +336,10 @@ body {
     background: #e74c3c;
 }
 
+.avail-dot.busy_soon {
+    background: #f39c12;
+}
+
 /* notification bell */
 .notif-bell {
     position: relative;
