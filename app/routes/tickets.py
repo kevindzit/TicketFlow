@@ -71,7 +71,12 @@ def view_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     from app.models.technician import Technician
     from app.models.known_issue import KnownIssue
+    from app.models.assignment_log import AssignmentLog
     technicians = Technician.query.all()
+
+    # build a lookup for tech names by id (for assignment history)
+    tech_names = {t.id: t.name for t in technicians}
+    assignment_logs = AssignmentLog.query.filter_by(ticket_id=ticket.id).order_by(AssignmentLog.timestamp.desc()).all()
 
     # build open ticket counts and availability, sort by least loaded first
     tech_open_counts = {}
@@ -89,7 +94,8 @@ def view_ticket(ticket_id):
         known_issue = KnownIssue.query.filter_by(category=ticket.category, status='active').first()
     return render_template('ticket_detail.html', ticket=ticket, technicians=technicians,
                            tech_open_counts=tech_open_counts, tech_availability=tech_availability,
-                           known_issue=known_issue)
+                           known_issue=known_issue, assignment_logs=assignment_logs,
+                           tech_names=tech_names)
 
 @tickets_bp.route('/tickets/<int:ticket_id>/note', methods=['POST'])
 @login_required

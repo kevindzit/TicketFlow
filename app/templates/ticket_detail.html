@@ -72,15 +72,30 @@
 {% if current_user.role == 'admin' %}
 <div class="admin-actions">
     <h3>Reassign Ticket</h3>
-    <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}" style="display: flex; gap: 10px;">
-        <select name="technician_id">
-            {% for tech in technicians %}
-            <option value="{{ tech.id }}" {% if ticket.assigned_tech_id == tech.id %}selected{% endif %}>{{ tech.name }} ({{ tech_open_counts[tech.id] }} open) - {{ tech_availability[tech.id]|replace('_', ' ')|title }}</option>
-            {% endfor %}
-        </select>
+    <form method="POST" action="{{ url_for('admin.assign_ticket', ticket_id=ticket.id) }}" onsubmit="return confirmReassign(this)">
+        <div class="form-group">
+            <label for="technician_id">Assign To</label>
+            <select id="technician_id" name="technician_id">
+                {% for tech in technicians %}
+                <option value="{{ tech.id }}" data-name="{{ tech.name }}" {% if ticket.assigned_tech_id == tech.id %}selected{% endif %}>{{ tech.name }} ({{ tech_open_counts[tech.id] }} open) - {{ tech_availability[tech.id]|replace('_', ' ')|title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="reason">Reason for reassignment (optional)</label>
+            <input type="text" id="reason" name="reason" placeholder="e.g. workload balancing, skill match">
+        </div>
         <button type="submit" class="btn">Reassign</button>
     </form>
 </div>
+<script>
+    function confirmReassign(form) {
+        var oldTech = "{{ ticket.assigned_tech.name if ticket.assigned_tech else 'Unassigned' }}";
+        var select = form.technician_id;
+        var newTech = select.options[select.selectedIndex].dataset.name;
+        return confirm('Reassign this ticket from ' + oldTech + ' to ' + newTech + '?\n\nAre you sure?');
+    }
+</script>
 {% endif %}
 
 <!-- notes section -->
@@ -101,4 +116,30 @@
         <button type="submit" class="btn">Add Note</button>
     </form>
 </div>
+
+{% if assignment_logs %}
+<div class="ticket-notes">
+    <h3>Reassignment History</h3>
+    <table class="ticket-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reassigned By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in assignment_logs %}
+            <tr>
+                <td>{{ log.timestamp.strftime('%m/%d/%Y %I:%M %p') }}</td>
+                <td>{{ tech_names.get(log.old_tech_id, 'Unassigned') }}</td>
+                <td>{{ tech_names.get(log.new_tech_id, 'Unassigned') }}</td>
+                <td>{{ log.assigned_by }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 {% endblock %}

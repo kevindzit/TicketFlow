@@ -17,6 +17,7 @@ def assign_ticket(ticket_id):
 
     ticket = Ticket.query.get_or_404(ticket_id)
     new_tech_id = request.form.get('technician_id')
+    reason = request.form.get('reason', '').strip()
 
     old_tech_name = ticket.assigned_tech.name if ticket.assigned_tech else 'Unassigned'
     new_tech = Technician.query.get(new_tech_id)
@@ -31,10 +32,13 @@ def assign_ticket(ticket_id):
     db.session.add(log)
 
     # add a note about the reassignment
+    note_content = f'Ticket reassigned from {old_tech_name} to {new_tech.name} by {current_user.name}'
+    if reason:
+        note_content += f'. Reason: {reason}'
     note = TicketNote(
         ticket_id=ticket.id,
         author_id=current_user.id,
-        content=f'Ticket reassigned from {old_tech_name} to {new_tech.name} by {current_user.name}'
+        content=note_content
     )
     db.session.add(note)
 
