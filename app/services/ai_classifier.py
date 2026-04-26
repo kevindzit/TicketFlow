@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 import ollama
-from flask import current_app
 
 # categories the AI can assign
 CATEGORIES = ['Network', 'Hardware', 'Software', 'Security', 'Email', 'Other']

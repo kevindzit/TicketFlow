@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+# admin only actions like reassigning tickets to a different technician
+from flask import Blueprint, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
 from app.models.ticket import Ticket, TicketNote

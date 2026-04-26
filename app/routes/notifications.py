@@ -1,3 +1,4 @@
+# notification dropdown data and mark-as-read actions
 from flask import Blueprint, redirect, url_for, jsonify, request
 from flask_login import login_required, current_user
 from app import db

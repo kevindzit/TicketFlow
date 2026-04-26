@@ -3,5 +3,6 @@ flask-sqlalchemy
 flask-login
 bcrypt
 pymysql
+cryptography
 ollama
 python-dotenv

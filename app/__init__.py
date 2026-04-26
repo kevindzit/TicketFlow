@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from datetime import datetime
 from config import Config
 
 db = SQLAlchemy()
@@ -52,6 +53,10 @@ def create_app():
         ).order_by(Notification.created_at.desc()).limit(10).all()
 
         return {'unread_count': len(notifs), 'recent_notifications': notifs}
+
+    @app.context_processor
+    def inject_year():
+        return {'current_year': datetime.utcnow().year}
 
     # create tables if they dont exist
     with app.app_context():

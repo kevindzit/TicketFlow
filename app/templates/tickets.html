@@ -2,8 +2,9 @@
 {% block title %}Tickets{% endblock %}
 {% block content %}
 <h1>All Tickets</h1>
-<a href="{{ url_for('tickets.new_ticket') }}" class="btn">New Ticket</a>
+<a href="{{ url_for('tickets.new_ticket') }}" class="btn" style="margin-bottom: 15px;">New Ticket</a>
 
+{% if tickets %}
 <table class="ticket-table">
     <thead>
         <tr>
@@ -30,4 +31,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <p>No tickets yet. Click New Ticket to create one.</p>
+</div>
+{% endif %}
 {% endblock %}

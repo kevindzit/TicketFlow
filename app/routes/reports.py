@@ -1,7 +1,7 @@
+# admin reporting page with summary stats and category/technician breakdowns
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-from app import db
 from app.models.ticket import Ticket
 from app.models.technician import Technician
 from app.models.assignment_log import AssignmentLog

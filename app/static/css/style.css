@@ -91,6 +91,11 @@ body {
     background: #2980b9;
 }
 
+.btn + .btn,
+.btn + form {
+    margin-left: 5px;
+}
+
 /* stats */
 .stats-grid {
     display: grid;
@@ -184,8 +189,25 @@ body {
     margin-bottom: 15px;
 }
 
-.alert-success { background: #d4edda; color: #155724; }
-.alert-error { background: #f8d7da; color: #721c24; }
+.alert-success { background: #d4edda; color: #155724; border-left: 4px solid #27ae60; }
+.alert-error { background: #f8d7da; color: #721c24; border-left: 4px solid #e74c3c; }
+.alert-info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #3498db; }
+.alert-warning { background: #fff3cd; color: #856404; border-left: 4px solid #f39c12; }
+
+.alert.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+/* footer */
+.site-footer {
+    background: #2c3e50;
+    color: #bdc3c7;
+    text-align: center;
+    padding: 15px;
+    font-size: 13px;
+    margin-top: 40px;
+}
 
 /* notifications */
 .notif-item {

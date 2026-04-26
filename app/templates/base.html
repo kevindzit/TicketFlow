@@ -75,5 +75,20 @@
 
         {% block content %}{% endblock %}
     </div>
+
+    <footer class="site-footer">
+        TicketFlow - CPSC 49200 Capstone Project &copy; {{ current_year }}
+    </footer>
+
+    <script>
+        // auto dismiss flash messages after 5 seconds
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(a) {
+                a.classList.add('fade-out');
+                setTimeout(function() { a.remove(); }, 500);
+            });
+        }, 5000);
+    </script>
 </body>
 </html>

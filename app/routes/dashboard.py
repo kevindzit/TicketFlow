@@ -1,3 +1,4 @@
+# renders the role based dashboard - tech sees their tickets, admin sees all with filters
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from app.models.ticket import Ticket, Client

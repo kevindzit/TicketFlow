@@ -1,3 +1,4 @@
+# admin only CRUD for known issues that get matched to incoming tickets
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db

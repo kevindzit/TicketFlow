@@ -23,6 +23,7 @@
 </div>
 
 <h2>Category Breakdown</h2>
+{% if category_stats %}
 <table class="ticket-table">
     <thead>
         <tr>
@@ -39,8 +40,14 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <p>No data available</p>
+</div>
+{% endif %}
 
 <h2 style="margin-top: 30px;">Technician Breakdown</h2>
+{% if tech_stats %}
 <table class="ticket-table">
     <thead>
         <tr>
@@ -59,4 +66,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <p>No data available</p>
+</div>
+{% endif %}
 {% endblock %}

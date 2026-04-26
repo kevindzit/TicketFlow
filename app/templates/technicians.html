@@ -5,6 +5,7 @@
 
 <a href="{{ url_for('technicians.add_technician') }}" class="btn" style="margin-bottom: 15px;">Add Technician</a>
 
+{% if technicians %}
 <table class="ticket-table">
     <thead>
         <tr>
@@ -32,4 +33,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <p>No technicians added yet</p>
+</div>
+{% endif %}
 {% endblock %}
