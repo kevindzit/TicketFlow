@@ -1,6 +1,31 @@
 # TicketFlow Testing Documentation
 
-This document covers the testing performed on the TicketFlow application. Each test case includes the steps taken, expected outcome, and actual result.
+This document covers the automated authentication tests and the earlier manual test results.
+
+## Automated Authentication Tests
+
+After installing `requirements.txt`, run this command from the project root:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The tests in `tests/test_auth.py` use a separate in-memory SQLite database for each test. They do not need a running MySQL or Ollama server and do not use the application's normal database.
+
+The checks cover:
+
+- The login page no longer links to password reset.
+- GET and POST requests to the reset endpoints return HTTP 403.
+- Known, unknown, and missing emails get the same response without issuing tokens.
+- Previously issued reset tokens cannot change passwords, even before they expire.
+- Valid sign-in and profile access still work, and wrong passwords are rejected.
+- Changing a password from the profile requires sign-in and the current password.
+
+GitHub Actions runs the same command on pushes and pull requests. Check the latest run for the current result.
+
+## Earlier Manual Results
+
+The 22 manual PASS results below were recorded on April 16, 2026. They have not been rerun for this password reset update.
 
 ---
 
@@ -152,4 +177,4 @@ This document covers the testing performed on the TicketFlow application. Each t
 
 ## Summary
 
-All 22 test cases passed as of 4/16/2026. The application is functioning as designed across all implemented features.
+All 22 manual test cases were recorded as passing on April 16, 2026. These are historical results. The automated authentication tests above cover the password reset change separately.

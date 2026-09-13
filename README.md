@@ -17,7 +17,7 @@ This project is my final capstone for my Computer Science degree at Lewis Univer
 - Admin reports with stats and category/technician breakdowns
 - Ticket reassignment with reason field and history tracking
 - Ticket intake through both a web form and a REST API endpoint
-- Forgot password flow with token based reset
+- Password changes from the profile page after confirming the current password
 
 ## Tech Stack
 
@@ -94,10 +94,15 @@ Default login credentials for testing:
 
 All seeded users use the same password.
 
+Public password reset is disabled in this demo. Both `/forgot-password` and `/reset-password/<token>` return HTTP 403, including for previously issued links. Reset emails are not sent. Users who know their current password can change it from their profile after signing in.
+
 ## Project Structure
 
 ```
 TicketFlow/
+├── .github/
+│   └── workflows/
+│       └── tests.yml
 ├── app/
 │   ├── __init__.py
 │   ├── models/
@@ -123,6 +128,8 @@ TicketFlow/
 │   ├── templates/
 │   └── static/
 │       └── css/
+├── tests/
+│   └── test_auth.py
 ├── config.py
 ├── run.py
 ├── seed.py
@@ -134,7 +141,15 @@ TicketFlow/
 
 ## Testing
 
-See [TESTING.md](TESTING.md) for the full test plan and results.
+Run the automated authentication tests from the project root after installing the dependencies:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+These tests use an in-memory SQLite database and do not need a running MySQL or Ollama server. GitHub Actions runs the same tests on pushes and pull requests.
+
+See [TESTING.md](TESTING.md) for the automated checks and earlier manual test results.
 
 ## License
 
